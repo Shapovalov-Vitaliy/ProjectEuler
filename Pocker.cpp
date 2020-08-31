@@ -1,4 +1,5 @@
 #include "Pocker.h"
+#include <algorithm>
 
 #define SECOND_WIN -2
 #define FIRST_WIN -1
@@ -12,7 +13,8 @@ vector<int> Pocker::value_to_int(vector<pair<char, char>> &hand)
 	for(int i=0; i < 5; ++i)
 	{
 		temp = hand[i].first;
-		switch(temp)
+		switch (temp)
+		{
 		case '2':
 			values.emplace_back(2);
 			break;
@@ -53,7 +55,7 @@ vector<int> Pocker::value_to_int(vector<pair<char, char>> &hand)
 			values.emplace_back(14);
 			break;
 		defualt: break;
-		
+		}
 	}
 }
 
@@ -103,6 +105,7 @@ int Pocker::compare_on_straight_flush()
 {
 	int winner = FIRST_WIN;
 
+//	compare_on_high_card();
 
 	for (int i = 0; i < 4; ++i)
 	{
@@ -120,28 +123,36 @@ int Pocker::compare_on_straight_flush()
 		
 		sort(begin(temp), end(temp));
 		
-		int p1 = temp.pop_front(); // TODO ruturn value???
-		int p2 = temp.pop_front();
+		int p1 = temp.back();
+		temp.pop_back();
+		int p2 = temp.back();
+		temp.pop_back();
 		
-		if(p2.first - p1.first != 1)
+		if(p2 - p1 != 1)
 			winner = SECOND_WIN;
 		else
 		{
-			p1 = temp.pop_front()
-			if(p1.first - p2.first != 1)
+			p1 = temp.back();
+			temp.pop_back();
+
+			if(p1 - p2 != 1)
 				winner = SECOND_WIN;
 			else
 			{
-				p2 = temp.pop_front()
-				if(p2.first - p1.first != 1)
+				p2 = temp.back();
+				temp.pop_back();
+
+				if(p2 - p1 != 1)
 					winner = SECOND_WIN;
 				else
 				{
-					p1 = temp.pop_front()
-					if(p1.first - p2.first != 1)
+					p1 = temp.back();
+					temp.pop_back();
+
+					if(p1 - p2 != 1)
 						winner = SECOND_WIN;
 					else
-						return FIRST_WIN;
+						winner = FIRST_WIN;
 				}	
 			}
 		}
@@ -153,32 +164,42 @@ int Pocker::compare_on_straight_flush()
 		
 		sort(begin(temp), end(temp));
 		
-		int p1 = temp.pop_front(); // TODO ruturn value???
-		int p2 = temp.pop_front();
-		
-		if(p2.first - p1.first != 1)
+		int p1 = temp.back();
+		temp.pop_back();
+		int p2 = temp.back();
+		temp.pop_back();
+
+		if (p2 - p1 != 1)
 			return NONE;
 		else
 		{
-			p1 = temp.pop_front()
-			if(p1.first - p2.first != 1)
+			p1 = temp.back();
+			temp.pop_back();
+
+			if (p1 - p2 != 1)
 				return NONE;
 			else
 			{
-				p2 = temp.pop_front()
-				if(p2.first - p1.first != 1)
+				p2 = temp.back();
+				temp.pop_back();
+
+				if (p2 - p1 != 1)
 					return NONE;
 				else
 				{
-					p1 = temp.pop_front()
-					if(p1.first - p2.first != 1)
+					p1 = temp.back();
+					temp.pop_back();
+
+					if (p1 - p2 != 1)
 						return NONE;
 					else
 						return SECOND_WIN;
-				}	
+				}
 			}
 		}
 	}
+
+	return winner;
 }
 
 int Pocker::compare_on_four_of_a_kind()
@@ -201,6 +222,8 @@ int Pocker::compare_on_four_of_a_kind()
 	
 	if(temp[0] != temp[1] && temp[2] == temp[4] || temp[3] != temp[4] && temp[0] == temp[3])
 		high_second = temp[4];
+
+//	compare_on_high_card();				// TODO: insert high_card
 
 	if(high_first == high_second)
 		return NONE;

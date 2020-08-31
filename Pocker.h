@@ -12,7 +12,7 @@ private:
 	vector<pair<char, char>> first_hand;
 	vector<pair<char, char>> second_hand;
 
-	vector<int> value_to_int(vector<pair<char, char>>&)
+	vector<int> value_to_int(vector<pair<char, char>>&);
 	bool find_value(char, vector<pair<char, char>>&);
 
 	const enum high_values{
