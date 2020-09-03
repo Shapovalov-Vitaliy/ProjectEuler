@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef _POCKER_H_
+#define _POCKER_H_
+
 #include <vector>
 #include <string>
 #include "SimpleTimer.h"
@@ -14,10 +17,7 @@ private:
 
 	vector<int> value_to_int(vector<pair<char, char>>&);
 	bool find_value(char, vector<pair<char, char>>&);
-
-	const enum high_values{
-		TEN = 'T', JACK = 'J', QUEEN = 'Q', KING = 'K', ACE = 'A'
-	};
+	int ret_winner(int, int);
 
 	int compare_on_royal_flush();
 	int compare_on_straight_flush();
@@ -37,3 +37,4 @@ public:
 	bool is_first_hand_win();
 };
 
+#endif // !_POCKER_H_
