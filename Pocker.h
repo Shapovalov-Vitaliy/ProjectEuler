@@ -17,7 +17,7 @@ private:
 
 	vector<int> value_to_int(vector<pair<char, char>>&);
 	bool find_value(char, vector<pair<char, char>>&);
-	int ret_winner(int, int);
+	int ret_winner(int, int, int, int);
 
 	int compare_on_royal_flush();
 	int compare_on_straight_flush();

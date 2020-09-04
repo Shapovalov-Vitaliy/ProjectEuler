@@ -1,4 +1,9 @@
-﻿#include <iostream>
+﻿// The file, poker.txt, contains one-thousand random hands dealt to two players. Each line of the file contains ten cards (separated
+// by a single space): the first five are Player 1's cards and the last five are Player 2's cards. You can assume that all hands are valid
+// (no invalid characters or repeated cards), each player's hand is in no specific order, and in each hand there is a clear winner.
+// How many hands does Player 1 win ?
+
+#include <iostream>
 #include "Pocker.h"
 #include <fstream>
 
@@ -7,6 +12,7 @@ using namespace std;
 int main()
 {
     Pocker game;
+    int counter = 0;
 
     ifstream table;
     table.open("Problem_54_Pocker_hands.txt");
@@ -15,30 +21,26 @@ int main()
         return -1;
 
     vector<pair<char, char>> hands;
+    string pair;
 
-/*    while (!table.eof())
+    while (!table.eof())
     {
-        for (int i = 0; i < 20; ++i)
+        for (int i = 0; i < 10; i++)
         {
-            string str;
-            
-        }*/
-        //    8C TS KC 9H 4S 7D 2S 5D 3S AC
-        hands.emplace_back(make_pair('8', 'C'));
-        hands.emplace_back(make_pair('T', 'S'));
-        hands.emplace_back(make_pair('K', 'C'));
-        hands.emplace_back(make_pair('9', 'H'));
-        hands.emplace_back(make_pair('4', 'S'));
-        hands.emplace_back(make_pair('7', 'D'));
-        hands.emplace_back(make_pair('2', 'S'));
-        hands.emplace_back(make_pair('5', 'D'));
-        hands.emplace_back(make_pair('3', 'S'));
-        hands.emplace_back(make_pair('A', 'C'));
-
+            table >> pair;
+            hands.emplace_back(make_pair(pair[0], pair[1]));
+        }
+        
         game.fill_hands(hands);
+        if (game.is_first_hand_win())
+            ++counter;
 
-        cout << game.is_first_hand_win() << endl;
-//    }
+        hands.clear();
+        game.clear_hands();
+    }
+
+    cout << "First player won " << counter << " games" << endl;
+
     table.close();
 
     return 0;

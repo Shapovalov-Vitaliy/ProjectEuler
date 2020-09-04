@@ -71,13 +71,17 @@ bool Pocker::find_value(char val, vector<pair<char, char>> &hand)
 	return false;
 }
 
-int Pocker::ret_winner(int high_first, int high_second)
+int Pocker::ret_winner(int high_first, int high_second, int high_combo_first = 0, int high_combo_second = 0)
 {
-	if (high_first == 0 && high_second == 0)
+	if (high_first == 0 && high_second == 0 && high_combo_first == 0 && high_combo_second == 0)
 		return NONE;
-	else if (high_first > high_second)
+	else if (high_combo_first > high_combo_second)
 		return FIRST_WIN;
-	else if (high_first < high_second)
+	else if (high_combo_first < high_combo_second)
+		return SECOND_WIN;
+	else if (high_combo_first == high_combo_second && high_first > high_second)
+		return FIRST_WIN;
+	else if (high_combo_first == high_combo_second && high_first < high_second)
 		return SECOND_WIN;
 	else
 		return compare_on_high_card();
@@ -129,22 +133,31 @@ int Pocker::compare_on_four_of_a_kind()
 	int high_first = 0;
 	int high_second = 0;
 	
+	int high_combo_first = 0;
+	int high_combo_second = 0;
+
 	vector<int> temp = value_to_int(first_hand);
 	
 	sort(begin(temp), end(temp));
 	
-	if(temp[0] != temp[1] && temp[1] == temp[4] || temp[3] != temp[4] && temp[0] == temp[3])
+	if (temp[0] != temp[1] && temp[1] == temp[4] || temp[3] != temp[4] && temp[0] == temp[3])
+	{
 		high_first = temp[4];
+		high_combo_first = temp[2];
+	}
 		
 	temp.clear();
 	temp = value_to_int(second_hand);
 		
 	sort(begin(temp), end(temp));
 	
-	if(temp[0] != temp[1] && temp[1] == temp[4] || temp[3] != temp[4] && temp[0] == temp[3])
+	if (temp[0] != temp[1] && temp[1] == temp[4] || temp[3] != temp[4] && temp[0] == temp[3])
+	{
 		high_second = temp[4];
+		high_combo_second = temp[2];
+	}
 
-	return ret_winner(high_first, high_second);
+	return ret_winner(high_first, high_second, high_combo_first, high_combo_second);
 }
 
 int Pocker::compare_on_full_house()
@@ -152,13 +165,19 @@ int Pocker::compare_on_full_house()
 	int high_first = 0;
 	int high_second = 0;
 
+	int high_combo_first = 0;
+	int high_combo_second = 0;
+
 	vector<int> temp = value_to_int(first_hand);
 
 	sort(begin(temp), end(temp));
 
 	if (temp[0] == temp[1] && temp[2] == temp[3] && temp[3] == temp[4] ||
-		temp[0] ==  temp[1] && temp[1] == temp[2] && temp[3] == temp[4])
+		temp[0] == temp[1] && temp[1] == temp[2] && temp[3] == temp[4])
+	{
 		high_first = temp[4];
+		high_combo_first = temp[2];
+	}
 
 	temp.clear();
 	temp = value_to_int(second_hand);
@@ -167,9 +186,12 @@ int Pocker::compare_on_full_house()
 
 	if (temp[0] == temp[1] && temp[2] == temp[3] && temp[3] == temp[4] ||
 		temp[0] == temp[1] && temp[1] == temp[2] && temp[3] == temp[4])
+	{
 		high_second = temp[4];
+		high_combo_second = temp[2];
+	}
 
-	return ret_winner(high_first, high_second);
+	return ret_winner(high_first, high_second, high_combo_first, high_combo_second);
 }
 
 int Pocker::compare_on_flush()
@@ -231,13 +253,19 @@ int Pocker::compare_on_three_of_a_kind()
 	int high_first = 0;
 	int high_second = 0;
 
+	int high_combo_first = 0;
+	int high_combo_second = 0;
+
 	vector<int> temp = value_to_int(first_hand);
 
 	sort(begin(temp), end(temp));
 
 	for (int i = 0; i < 3; ++i)
-		if (temp[i] == temp[i+2])
+		if (temp[i] == temp[i + 2])
+		{
 			high_first = temp[4];
+			high_combo_first = temp[i + 2];
+		}
 
 	temp.clear();
 	temp = value_to_int(second_hand);
@@ -245,16 +273,22 @@ int Pocker::compare_on_three_of_a_kind()
 	sort(begin(temp), end(temp));
 
 	for (int i = 0; i < 3; ++i)
-		if (temp[i] == temp[i+2])
+		if (temp[i] == temp[i + 2])
+		{
 			high_second = temp[4];
+			high_combo_second = temp[i + 2];
+		}
 
-	return ret_winner(high_first, high_second);
+	return ret_winner(high_first, high_second, high_combo_first, high_combo_second);
 }
 
 int Pocker::compare_on_two_pairs()
 {
 	int high_first = 0;
 	int high_second = 0;
+
+	int high_combo_first = 0;
+	int high_combo_second = 0;
 
 	vector<int> temp = value_to_int(first_hand);
 
@@ -263,8 +297,11 @@ int Pocker::compare_on_two_pairs()
 	for (int i = 0; i < 4; ++i)
 		if (temp[i] == temp[i+1])
 			for (int q = i + 2; q < 4; ++q)
-				if (temp[q] == temp[q+1])
+				if (temp[q] == temp[q + 1])
+				{
 					high_first = temp[4];
+					high_combo_first = temp[q + 1];
+				}
 
 	temp.clear();
 	temp = value_to_int(second_hand);
@@ -274,10 +311,13 @@ int Pocker::compare_on_two_pairs()
 	for (int i = 0; i < 4; ++i)
 		if (temp[i] == temp[i+1] && i <= 1)
 			for (int q = i + 2; q < 4; ++q)
-				if (temp[q] == temp[q+1])
+				if (temp[q] == temp[q + 1])
+				{
 					high_second = temp[4];
+					high_combo_second = temp[q + 1];
+				}
 
-	return ret_winner(high_first, high_second);
+	return ret_winner(high_first, high_second, high_combo_first, high_combo_second);
 }
 
 int Pocker::compare_on_one_pair()
@@ -285,13 +325,19 @@ int Pocker::compare_on_one_pair()
 	int high_first = 0;
 	int high_second = 0;
 
+	int high_combo_first = 0;
+	int high_combo_second = 0;
+
 	vector<int> temp = value_to_int(first_hand);
 
 	sort(begin(temp), end(temp));
 
 	for (int i = 0; i < 4; ++i)
-		if (temp[i] == temp[i+1])
+		if (temp[i] == temp[i + 1])
+		{
 			high_first = temp[4];
+			high_combo_first = temp[i + 1];
+		}
 
 	temp.clear();
 	temp = value_to_int(second_hand);
@@ -299,10 +345,13 @@ int Pocker::compare_on_one_pair()
 	sort(begin(temp), end(temp));
 
 	for (int i = 0; i < 4; ++i)
-		if (temp[i] == temp[i+1])
-			high_first = temp[4];
+		if (temp[i] == temp[i + 1])
+		{
+			high_second = temp[4];
+			high_combo_second = temp[i + 1];
+		}
 
-	return ret_winner(high_first, high_second);
+	return ret_winner(high_first, high_second, high_combo_first, high_combo_second);
 }
 
 int Pocker::compare_on_high_card()
